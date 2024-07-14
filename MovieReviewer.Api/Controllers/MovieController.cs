@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using MovieReviewer.Api.Features.Movie;
 using MovieReviewer.Api.Shared.Dtos;
 
@@ -22,13 +24,13 @@ namespace MovieReviewer.Api.Controllers
 
             if (response.IsSuccess)
             {
-                return Ok(new {response.Data});
+                return Ok(new { response.Data });
             }
 
             return BadRequest(response.Errors);
         }
-        [HttpGet]
 
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var items = await _movieService.GetAllMovieData();
@@ -40,6 +42,7 @@ namespace MovieReviewer.Api.Controllers
 
             return BadRequest(items.Errors);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovieData(int id)
         {
@@ -53,12 +56,11 @@ namespace MovieReviewer.Api.Controllers
             return BadRequest(response.Errors);
         }
 
-
         [HttpPut("{id}")]
-
-        public async Task<IActionResult> UpdateMovieData(int id, MovieDto movieDto)
+        [TranslateResultToActionResult]
+        public async Task<Result> UpdateMovieData(int id, MovieDto movieDto)
         {
-
+            return await _movieService.UpdateMovieData(id, movieDto);
         }
 
         [HttpDelete("{id}")]
